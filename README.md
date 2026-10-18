@@ -2,6 +2,7 @@
 
 [![github stars](https://badgen.net/github/stars/phucbm/github-followers-action?icon=github)](https://github.com/phucbm/github-followers-action/)
 [![github license](https://badgen.net/github/license/phucbm/github-followers-action?icon=github)](https://github.com/phucbm/github-followers-action/blob/main/LICENSE)
+[![github marketplace](https://badgen.net/badge/github/marketplace/blue?icon=github)](https://github.com/marketplace/actions/github-followers-to-discord)
 [![Made in Vietnam](https://raw.githubusercontent.com/webuild-community/badge/master/svg/made.svg)](https://webuild.community)
 
 A GitHub Action that tells your Discord channel who followed and who unfollowed you on GitHub.
