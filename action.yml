@@ -1,0 +1,76 @@
+name: 'GitHub Followers to Discord'
+description: 'Track new followers and unfollowers of a GitHub account and post each change to a Discord channel'
+author: 'phucbm'
+
+branding:
+  icon: 'users'
+  color: 'purple'
+
+inputs:
+  discord-webhook-url:
+    description: 'Discord webhook URL to post to. Store it as a secret.'
+    required: true
+  username:
+    description: 'GitHub user whose followers are tracked'
+    required: false
+    default: ${{ github.repository_owner }}
+  github-token:
+    description: 'GitHub token used to read the follower list'
+    required: false
+    default: ${{ github.token }}
+  state-file:
+    description: 'JSON file that keeps the last known followers'
+    required: false
+    default: '.github/followers.json'
+  notify-follows:
+    description: 'Post new followers'
+    required: false
+    default: 'true'
+  notify-unfollows:
+    description: 'Post unfollowers'
+    required: false
+    default: 'true'
+  max-messages:
+    description: 'Above this many changes in one run, post a single summary instead of one message each'
+    required: false
+    default: '10'
+  commit-state:
+    description: 'Commit and push the state file when it changes'
+    required: false
+    default: 'true'
+  dry-run:
+    description: 'Print the messages instead of posting them, and do not commit'
+    required: false
+    default: 'false'
+
+outputs:
+  followers:
+    description: 'Current number of followers'
+    value: ${{ steps.track.outputs.followers }}
+  new-followers:
+    description: 'Comma-separated logins of new followers'
+    value: ${{ steps.track.outputs.new-followers }}
+  unfollowers:
+    description: 'Comma-separated logins of unfollowers'
+    value: ${{ steps.track.outputs.unfollowers }}
+  first-run:
+    description: 'Whether this run only saved the starting list'
+    value: ${{ steps.track.outputs.first-run }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Track followers
+      id: track
+      shell: bash
+      env:
+        GH_TOKEN: ${{ inputs.github-token }}
+        DISCORD_WEBHOOK_URL: ${{ inputs.discord-webhook-url }}
+        GH_USERNAME: ${{ inputs.username }}
+        STATE_FILE: ${{ inputs.state-file }}
+        NOTIFY_FOLLOWS: ${{ inputs.notify-follows }}
+        NOTIFY_UNFOLLOWS: ${{ inputs.notify-unfollows }}
+        MAX_MESSAGES: ${{ inputs.max-messages }}
+        COMMIT_STATE: ${{ inputs.commit-state }}
+        DRY_RUN: ${{ inputs.dry-run }}
+      run: bash "${{ github.action_path }}/followers.sh"
